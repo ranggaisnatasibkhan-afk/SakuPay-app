@@ -132,17 +132,17 @@
       <section id="view-profile" class="slide-in hidden px-6 pt-8 pb-24">
         <h2 class="text-xl font-bold text-gray-800 mb-6">Profil Pengguna</h2>
         
-        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
           <label class="block text-xs font-bold text-gray-500 mb-2">NAMA TAMPILAN</label>
-          <div class="flex items-center gap-2">
-            <input type="text" id="inputProfileName" class="w-full min-w-0 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-800 focus:outline-none focus:border-blue-500 text-sm">
-            <button onclick="saveName()" class="bg-blue-600 text-white px-4 py-3 rounded-xl font-bold text-sm shrink-0 active:scale-95">Simpan</button>
+          <div class="grid grid-cols-3 gap-2">
+            <input type="text" id="inputProfileName" class="col-span-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 font-bold text-gray-800 focus:outline-none focus:border-blue-500 text-sm">
+            <button onclick="saveName()" class="col-span-1 bg-blue-600 text-white rounded-xl font-bold text-xs active:scale-95 py-2.5">Simpan</button>
           </div>
         </div>
 
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-red-100">
           <label class="block text-xs font-bold text-red-500 mb-2">ZONA BAHAYA</label>
-          <button onclick="clearAllData()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl active:bg-red-100 border border-red-100">
+          <button onclick="clearAllData()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl active:bg-red-100 border border-red-100 text-sm">
             Hapus Seluruh Data Aplikasi
           </button>
         </div>
