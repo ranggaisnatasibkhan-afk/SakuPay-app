@@ -134,9 +134,9 @@
         
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
           <label class="block text-xs font-bold text-gray-500 mb-2">NAMA TAMPILAN</label>
-          <div class="flex gap-2">
-            <input type="text" id="inputProfileName" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-800 focus:outline-none focus:border-blue-500">
-            <button onclick="saveName()" class="bg-blue-600 text-white px-5 rounded-xl font-bold active:scale-95">Simpan</button>
+          <div class="flex items-center gap-2">
+            <input type="text" id="inputProfileName" class="w-full min-w-0 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-800 focus:outline-none focus:border-blue-500 text-sm">
+            <button onclick="saveName()" class="bg-blue-600 text-white px-4 py-3 rounded-xl font-bold text-sm shrink-0 active:scale-95">Simpan</button>
           </div>
         </div>
 
@@ -150,7 +150,7 @@
     </main>
 
     <!-- ================= BOTTOM NAVIGATION (GAYA GOPAY/DANA) ================= -->
-   <nav class="bg-white border-t border-gray-200 px-6 py-3 flex justify-between items-center z-50 rounded-t-3xl shadow-[0_-5px_15px_rgba(0,0,0,0.02)] pb-safe relative">
+   <nav class="bg-white border-t border-gray-200 px-6 py-3 flex justify-between items-center z-50 rounded-t-3xl shadow-[0_-5px_15px_rgba(0,0,0,0.02)] pb-safe relative">`
       <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center text-blue-600 w-16 active:scale-95 transition-transform">
         <i class="fa-solid fa-house text-xl mb-1"></i>
         <span class="text-[10px] font-bold">Beranda</span>
