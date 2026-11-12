@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SakuPay</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .slide-in { animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-gray-100 h-screen overflow-hidden flex justify-center selection:bg-blue-200">
+  
+  <div class="w-full max-w-md bg-gray-50 h-full flex flex-col relative shadow-2xl overflow-hidden">
+    
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 overflow-y-auto no-scrollbar relative bg-gray-50">
+      
+      <!-- ================= 1. BERANDA (GAYA DANA) ================= -->
+      <section id="view-home" class="slide-in block pb-24">
+        
+        <!-- Header Biru -->
+        <div class="bg-blue-600 px-6 pt-10 pb-20 rounded-b-[2.5rem] relative">
+          <div class="absolute top-0 right-0 w-40 h-40 bg-white opacity-5 rounded-full -mr-10 -mt-10"></div>
+          
+          <div class="flex justify-between items-center mb-6 relative z-10">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white border border-white/30 backdrop-blur-sm">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div>
+                <p class="text-xs text-blue-200 font-medium">Hai, Selamat Datang</p>
+                <h1 id="userNameDisplay" class="text-base font-bold text-white tracking-wide">Rangga Isnata</h1>
+              </div>
+            </div>
+          </div>
+          
+          <div class="relative z-10">
+            <p class="text-sm text-blue-200 font-medium mb-1">Total Pengeluaran (Bulan ini)</p>
+            <div class="flex items-baseline gap-1">
+              <h2 class="text-4xl font-extrabold text-white" id="totalDisplay">Rp0</h2>
+            </div>
+          </div>
+        </div>
+
+        <!-- Menu Aksi Melayang (Quick Actions) -->
+        <div class="px-5 -mt-10 relative z-20 mb-6">
+          <div class="bg-white rounded-2xl shadow-md p-4 grid grid-cols-4 gap-2 border border-gray-100">
+            <button onclick="switchTab('add')" class="flex flex-col items-center gap-2 active:scale-95 transition-transform">
+              <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-money-bill-transfer"></i></div>
+              <span class="text-[11px] font-semibold text-gray-700">Catat</span>
+            </button>
+            <button onclick="switchTab('history')" class="flex flex-col items-center gap-2 active:scale-95 transition-transform">
+              <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-clock-rotate-left"></i></div>
+              <span class="text-[11px] font-semibold text-gray-700">Riwayat</span>
+            </button>
+            <button onclick="exportCSV()" class="flex flex-col items-center gap-2 active:scale-95 transition-transform">
+              <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-file-excel"></i></div>
+              <span class="text-[11px] font-semibold text-gray-700">Rekap</span>
+            </button>
+            <button onclick="switchTab('profile')" class="flex flex-col items-center gap-2 active:scale-95 transition-transform">
+              <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-gear"></i></div>
+              <span class="text-[11px] font-semibold text-gray-700">Profil</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Daftar Transaksi -->
+        <div class="px-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-gray-800 text-sm">Transaksi Terakhir</h3>
+            <button onclick="switchTab('history')" class="text-blue-600 text-xs font-bold bg-blue-50 px-3 py-1 rounded-full">Lihat Semua</button>
+          </div>
+          <ul id="recentList" class="space-y-3"></ul>
+        </div>
+      </section>
+
+      <!-- ================= 2. TAMBAH CATATAN ================= -->
+      <section id="view-add" class="slide-in hidden px-6 pt-8 pb-24 h-full bg-white">
+        <div class="flex items-center mb-8">
+          <button onclick="switchTab('home')" class="w-8 h-8 flex items-center justify-center text-gray-500 bg-gray-100 rounded-full mr-4 active:scale-90"><i class="fa-solid fa-arrow-left"></i></button>
+          <h2 class="text-xl font-bold text-gray-800">Catat Pengeluaran</h2>
+        </div>
+        
+        <form id="expenseForm" class="space-y-5">
+          <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+            <label class="block text-xs font-bold text-gray-500 mb-2">NOMINAL TRANSAKSI</label>
+            <div class="flex items-center">
+              <span class="text-xl font-bold text-gray-900 mr-2">Rp</span>
+              <input type="number" id="jumlah" placeholder="0" required min="1" class="w-full bg-transparent text-4xl font-extrabold text-blue-600 focus:outline-none placeholder-gray-300">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-500 mb-2 ml-1">Nama Keperluan</label>
+            <input type="text" id="nama" placeholder="Contoh: Makan Siang, Bensin" required class="w-full bg-white border-2 border-gray-100 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:border-blue-500 font-medium">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-500 mb-2 ml-1">Kategori</label>
+            <select id="kategori" required class="w-full bg-white border-2 border-gray-100 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:border-blue-500 font-medium appearance-none">
+              <option value="Makanan"> Makanan & Minuman</option>
+              <option value="Transport"> Transportasi</option>
+              <option value="Belanja"> Belanja</option>
+              <option value="Lainnya"> Lain-lain</option>
+            </select>
+          </div>
+
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-blue-200 active:scale-95 transition-transform mt-4">
+            Simpan Transaksi
+          </button>
+        </form>
+      </section>
+
+      <!-- ================= 3. RIWAYAT ================= -->
+      <section id="view-history" class="slide-in hidden px-6 pt-8 pb-24">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-bold text-gray-800">Semua Riwayat</h2>
+        </div>
+        <ul id="historyList" class="space-y-3"></ul>
+      </section>
+
+      <!-- ================= 4. PROFIL ================= -->
+      <section id="view-profile" class="slide-in hidden px-6 pt-8 pb-24">
+        <h2 class="text-xl font-bold text-gray-800 mb-6">Profil Pengguna</h2>
+        
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
+          <label class="block text-xs font-bold text-gray-500 mb-2">NAMA TAMPILAN</label>
+          <div class="flex gap-2">
+            <input type="text" id="inputProfileName" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-800 focus:outline-none focus:border-blue-500">
+            <button onclick="saveName()" class="bg-blue-600 text-white px-5 rounded-xl font-bold active:scale-95">Simpan</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-red-100">
+          <label class="block text-xs font-bold text-red-500 mb-2">ZONA BAHAYA</label>
+          <button onclick="clearAllData()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl active:bg-red-100 border border-red-100">
+            Hapus Seluruh Data Aplikasi
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- ================= BOTTOM NAVIGATION (GAYA GOPAY/DANA) ================= -->
+    <nav class="bg-white border-t border-gray-200 px-6 py-3 flex justify-between items-center z-50 rounded-t-3xl shadow-[0_-5px_15px_rgba(0,0,0,0.02)] absolute bottom-0 w-full pb-safe">
+      <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center text-blue-600 w-16 active:scale-95 transition-transform">
+        <i class="fa-solid fa-house text-xl mb-1"></i>
+        <span class="text-[10px] font-bold">Beranda</span>
+      </button>
+      <button onclick="switchTab('history')" id="nav-history" class="flex flex-col items-center text-gray-400 w-16 active:scale-95 transition-transform">
+        <i class="fa-solid fa-rectangle-list text-xl mb-1"></i>
+        <span class="text-[10px] font-semibold">Riwayat</span>
+      </button>
+      
+      <!-- Tombol Tengah ala QRIS/Pay -->
+      <button onclick="switchTab('add')" id="nav-add" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg shadow-blue-200 border-4 border-white transform -translate-y-5 active:scale-90 transition-transform">
+        <i class="fa-solid fa-plus text-2xl"></i>
+      </button>
+
+      <button onclick="exportCSV()" class="flex flex-col items-center text-gray-400 w-16 active:scale-95 transition-transform">
+        <i class="fa-solid fa-download text-xl mb-1"></i>
+        <span class="text-[10px] font-semibold">Rekap</span>
+      </button>
+      <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center text-gray-400 w-16 active:scale-95 transition-transform">
+        <i class="fa-solid fa-user text-xl mb-1"></i>
+        <span class="text-[10px] font-semibold">Profil</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Toast Notifikasi (Popup Atas) -->
+  <div id="toast" class="fixed top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-xl opacity-0 transform -translate-y-4 transition-all duration-300 pointer-events-none z-[100] text-sm font-semibold flex items-center gap-3">
+    <i class="fa-solid fa-circle-check text-green-400" id="toastIcon"></i>
+    <span id="toastMsg">Berhasil!</span>
+  </div>
+
+  <script>
+    /* ==========================================
+       AUTO-FIX UNTUK MENCEGAH LAYAR MACET
+       Kode ini akan menghapus cache PWA lama
+    ========================================== */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister(); // Hapus pendaftaran lama
+        }
+      });
+      caches.keys().then(function(names) {
+        for (let name of names) caches.delete(name); // Hapus memori cache lama
+      });
+    }
+
+    // --- INISIALISASI DATA ---
+    let expenses = JSON.parse(localStorage.getItem('sakupay_data')) || [];
+    const views = ['home', 'add', 'history', 'profile'];
+    
+    const catConfig = {
+      'Makanan': { icon: 'fa-burger', color: 'text-orange-500', bg: 'bg-orange-100' },
+      'Transport': { icon: 'fa-car', color: 'text-blue-500', bg: 'bg-blue-100' },
+      'Belanja': { icon: 'fa-bag-shopping', color: 'text-purple-500', bg: 'bg-purple-100' },
+      'Lainnya': { icon: 'fa-box', color: 'text-gray-500', bg: 'bg-gray-200' }
+    };
+
+    const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+
+    // --- FUNGSI NOTIFIKASI ---
+    window.showToast = (msg, icon = 'fa-circle-check', color = 'text-green-400') => {
+      document.getElementById('toastMsg').textContent = msg;
+      document.getElementById('toastIcon').className = `fa-solid ${icon} ${color}`;
+      const toast = document.getElementById('toast');
+      toast.classList.remove('opacity-0', '-translate-y-4');
+      setTimeout(() => toast.classList.add('opacity-0', '-translate-y-4'), 2500);
+    };
+
+    // --- FUNGSI NAVIGASI LAYAR ---
+    window.switchTab = (target) => {
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if(el) { el.classList.add('hidden'); el.classList.remove('block'); }
+      });
+      const targetEl = document.getElementById(`view-${target}`);
+      if(targetEl) { targetEl.classList.remove('hidden'); targetEl.classList.add('block'); }
+
+      // Ubah warna menu navigasi (Kecuali tombol rekap dan add)
+      ['home', 'history', 'profile'].forEach(nav => {
+        const btn = document.getElementById(`nav-${nav}`);
+        if(btn) {
+          btn.classList.remove('text-blue-600');
+          btn.classList.add('text-gray-400');
+          btn.querySelector('span').classList.replace('font-bold', 'font-semibold');
+        }
+      });
+      
+      const activeBtn = document.getElementById(`nav-${target}`);
+      if(activeBtn) {
+        activeBtn.classList.remove('text-gray-400');
+        activeBtn.classList.add('text-blue-600');
+        activeBtn.querySelector('span').classList.replace('font-semibold', 'font-bold');
+      }
+    };
+
+    // --- RENDER DAFTAR TRANSAKSI ---
+    function renderData() {
+      const recentList = document.getElementById('recentList');
+      const historyList = document.getElementById('historyList');
+      recentList.innerHTML = ''; historyList.innerHTML = '';
+      let total = 0;
+
+      if(expenses.length === 0) {
+        const emptyState = `<div class="text-center text-gray-400 py-6"><i class="fa-solid fa-receipt text-3xl mb-2 opacity-50 block"></i><p class="text-xs">Belum ada transaksi</p></div>`;
+        recentList.innerHTML = emptyState;
+        historyList.innerHTML = emptyState;
+      }
+
+      const reversed = [...expenses].reverse();
+      
+      reversed.forEach((exp, index) => {
+        total += exp.jumlah;
+        const originalIndex = expenses.length - 1 - index;
+        const conf = catConfig[exp.kategori] || catConfig['Lainnya'];
+        
+        const card = `
+          <li class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center ${conf.bg} ${conf.color}">
+                <i class="fa-solid ${conf.icon}"></i>
+              </div>
+              <div>
+                <p class="font-bold text-gray-800 text-sm leading-tight">${exp.nama}</p>
+                <p class="text-[11px] text-gray-400 mt-0.5">${exp.tanggal}</p>
+              </div>
+            </div>
+            <div class="flex flex-col items-end">
+              <span class="font-bold text-gray-900">${formatRupiah(exp.jumlah)}</span>
+              <button onclick="deleteData(${originalIndex})" class="text-red-500 text-[10px] font-bold uppercase mt-1 bg-red-50 px-2 py-0.5 rounded">Hapus</button>
+            </div>
+          </li>
+        `;
+        historyList.innerHTML += card;
+        if(index < 4) recentList.innerHTML += card; // Tampilkan 4 terbaru di beranda
+      });
+
+      document.getElementById('totalDisplay').textContent = formatRupiah(total);
+      localStorage.setItem('sakupay_data', JSON.stringify(expenses));
+    }
+
+    // --- AKSI FORMULIR ---
+    document.getElementById('expenseForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nama = document.getElementById('nama').value;
+      const kategori = document.getElementById('kategori').value;
+      const jumlah = parseInt(document.getElementById('jumlah').value);
+      
+      const tgl = new Date();
+      const tanggal = `${tgl.getDate()} ${tgl.toLocaleString('id-ID', { month: 'short' })} ${tgl.getFullYear()} • ${tgl.getHours().toString().padStart(2, '0')}:${tgl.getMinutes().toString().padStart(2, '0')}`;
+      
+      expenses.push({ nama, kategori, jumlah, tanggal });
+      e.target.reset();
+      renderData();
+      switchTab('home');
+      window.showToast('Berhasil dicatat!');
+    });
+
+    // --- AKSI HAPUS ---
+    window.deleteData = (index) => {
+      if(confirm('Hapus riwayat ini?')) {
+        expenses.splice(index, 1);
+        renderData();
+        window.showToast('Berhasil dihapus!', 'fa-trash', 'text-red-400');
+      }
+    };
+
+    // --- AKSI RESET ---
+    window.clearAllData = () => {
+      if(confirm('Peringatan: Seluruh data akan terhapus. Lanjutkan?')) {
+        expenses = [];
+        renderData();
+        window.showToast('Aplikasi direset!', 'fa-rotate', 'text-blue-400');
+      }
+    };
+
+    // --- EKSPOR EXCEL ---
+    window.exportCSV = () => {
+      if(expenses.length === 0) return window.showToast('Data kosong!', 'fa-xmark', 'text-red-400');
+      let csv = 'Tanggal,Kategori,Nama Keperluan,Jumlah (Rp)\n';
+      expenses.forEach(r => csv += `"${r.tanggal}","${r.kategori}","${r.nama}","${r.jumlah}"\n`);
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = window.URL.createObjectURL(blob);
+      a.download = 'Rekap_SakuPay.csv';
+      a.click();
+      window.showToast('Laporan diunduh!');
+    };
+
+    // --- PROFIL ---
+    function loadName() {
+      let saved = localStorage.getItem('sakupay_name') || 'Rangga Isnata';
+      document.getElementById('userNameDisplay').textContent = saved;
+      document.getElementById('inputProfileName').value = saved;
+    }
+
+    window.saveName = () => {
+      const val = document.getElementById('inputProfileName').value.trim();
+      if(val) {
+        localStorage.setItem('sakupay_name', val);
+        loadName();
+        window.showToast('Nama profil disimpan!');
+      }
+    };
+
+    // --- JALANKAN SAAT DIBUKA ---
+    loadName();
+    renderData();
+  </script>
+</body>
+</html>
