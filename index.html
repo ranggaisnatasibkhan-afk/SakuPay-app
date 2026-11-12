@@ -17,7 +17,7 @@
     @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
-<body class="bg-gray-100 h-screen overflow-hidden flex justify-center selection:bg-blue-200">
+<body class="bg-gray-100 h-[100dvh] overflow-hidden flex justify-center selection:bg-blue-200">
   
   <div class="w-full max-w-md bg-gray-50 h-full flex flex-col relative shadow-2xl overflow-hidden">
     
@@ -150,7 +150,7 @@
     </main>
 
     <!-- ================= BOTTOM NAVIGATION (GAYA GOPAY/DANA) ================= -->
-    <nav class="bg-white border-t border-gray-200 px-6 py-3 flex justify-between items-center z-50 rounded-t-3xl shadow-[0_-5px_15px_rgba(0,0,0,0.02)] absolute bottom-0 w-full pb-safe">
+   <nav class="bg-white border-t border-gray-200 px-6 py-3 flex justify-between items-center z-50 rounded-t-3xl shadow-[0_-5px_15px_rgba(0,0,0,0.02)] pb-safe relative">
       <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center text-blue-600 w-16 active:scale-95 transition-transform">
         <i class="fa-solid fa-house text-xl mb-1"></i>
         <span class="text-[10px] font-bold">Beranda</span>
